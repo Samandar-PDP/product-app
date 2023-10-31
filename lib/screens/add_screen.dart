@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -14,6 +15,12 @@ class _AddScreenState extends State<AddScreen> {
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  XFile? _xFile;
+
+  void _saveProductToFirebase() {
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,7 @@ class _AddScreenState extends State<AddScreen> {
       appBar: AppBar(
         title: const Text("Add New Product"),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.check_box_sharp))
+          IconButton(onPressed: _saveProductToFirebase, icon: const Icon(Icons.check_box_sharp))
         ],
       ),
       body: Center(
@@ -31,10 +38,18 @@ class _AddScreenState extends State<AddScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _image != null ? CircleAvatar(
-                foregroundImage: FileImage(File(_image.path ?? "")),
-                radius: 70
-              ) : const Icon(Icons.image),
+              GestureDetector(
+                onTap: () async {
+                  _xFile = await _picker.pickImage(source: ImageSource.gallery);
+                  setState(() {
+
+                  });
+                },
+                child: _xFile != null ? CircleAvatar(
+                    foregroundImage: FileImage(File(_xFile?.path ?? "")),
+                    radius: 70
+                ) : const Icon(Icons.image),
+              ),
               const SizedBox(height: 20),
               const Align(alignment: Alignment.centerLeft, child: Text("Product Name")),
               TextField(

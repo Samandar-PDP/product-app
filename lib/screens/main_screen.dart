@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:product_app/service/firebase_manager.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -8,13 +9,19 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final FirebaseManager _manager = FirebaseManager();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Products")
       ),
-      body: ,
+      body: Center(
+        child: Text(
+          _manager.getUser()?.email ?? "Email",
+          style: TextStyle(fontSize: 30),
+        ),
+      ),
     );
   }
 }

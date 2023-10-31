@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:product_app/auth/login_screen.dart';
+import 'package:product_app/screens/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +24,7 @@ class ProductApp extends StatelessWidget {
         useMaterial3: true,
       ),
       color: const Color(0xFF0AB00E),
-      home: const MainScreen(),
+      home: const LoginScreen(),
     );
   }
 }
