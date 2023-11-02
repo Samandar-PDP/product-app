@@ -35,5 +35,4 @@ class FirebaseManager {
       return "Error";
     }
   }
-
 }

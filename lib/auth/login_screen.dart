@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:product_app/auth/register_screen.dart';
 import 'package:product_app/screens/main_screen.dart';
 import 'package:product_app/service/firebase_manager.dart';
 
@@ -21,14 +22,16 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     _manager.login(email.text, password.text).then((value) {
-      if(value == "Success") {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const MainScreen()));
+      if (value == "Success") {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+            (Route<dynamic> route) => false);
       } else {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(value)));
       }
     });
   }
@@ -47,19 +50,23 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               TextField(
                 controller: email,
-                decoration: InputDecoration(
-                  hintText: 'Email'
-                ),
+                decoration: InputDecoration(hintText: 'Email'),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: password,
-                decoration: InputDecoration(
-                  hintText: 'Password'
-                ),
+                decoration: InputDecoration(hintText: 'Password'),
               ),
               const SizedBox(height: 20),
-              _isLoading ? CircularProgressIndicator() : ElevatedButton(onPressed: login, child: Text("Login"))
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(onPressed: login, child: Text("Login")),
+               // mashetdan pasini yoz
+              const SizedBox(height: 50),
+              CupertinoButton(child: Text("Register"), onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => const RegisterScreen()));
+              })
             ],
           ),
         ),
