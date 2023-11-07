@@ -24,36 +24,49 @@ class FirebaseManager {
       return "Error";
     }
   }
+
   Future<String> register(File imageFile, String email, String password) async {
     try {
-      final user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      final uploadTask = await _storage.ref('user_images/${user.user?.uid}').putFile(imageFile);
+      final user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      final uploadTask = await _storage
+          .ref('user_images/${user.user?.uid}')
+          .putFile(imageFile);
       final image = await uploadTask.ref.getDownloadURL();
       final date = DateTime.now();
-      final newUser =
-      {'id': "${user.user?.uid}", 'email': email, 'password': password, 'image': image, 'date': date.toLocal().toString()};
+      final newUser = {
+        'id': "${user.user?.uid}",
+        'email': email,
+        'password': password,
+        'image': image,
+        'date': date.toLocal().toString()
+      };
       _firestore.collection('users').doc(user.user?.uid).set(newUser);
       return "Success";
     } on FirebaseAuthException {
       return "Error";
     }
   }
+
   Future<FbUser?> getFbUser() async {
     try {
       final uid = getUser()?.uid ?? "";
       final doc = await _firestore.doc('users/$uid').get();
       return FbUser.fromJson(doc.data()!);
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
+
   Future<void> logOut() async {
     await _auth.signOut();
   }
 
   Future<void> addProduct(Product product) async {
     final uid = getUser()?.uid ?? "";
-    final uploadTask = await _storage.ref('product_images/$uid').putFile(File(product.image ?? ""));
+    final uploadTask = await _storage
+        .ref('product_images/$uid')
+        .putFile(File(product.image ?? ""));
     final image = await uploadTask.ref.getDownloadURL();
     final data = {
       'uid': uid,
@@ -61,6 +74,22 @@ class FirebaseManager {
       'price': product.price,
       'image': image
     };
-    return await _firestore.collection('products').doc(uid).set(data);
+    final productId = DateTime.now().microsecondsSinceEpoch.toString();
+    return await _firestore.collection('products').doc(productId).set(data);
+  }
+
+  Future<List<Product>> getProductList() async {
+    final snapshots = await _firestore.collection('products').get();
+    final List<Product> productList = [];
+    final uid = getUser()?.uid ?? ""; /// MANA 1
+    snapshots.docs.forEach((e) {
+      final map = e.data();
+      final product =
+      Product(map['uid'], map['name'], map['price'], map['image']);
+      if(uid == product.uid) { /// MANA 2
+        productList.add(product);
+      }
+    });
+    return productList;
   }
 }
